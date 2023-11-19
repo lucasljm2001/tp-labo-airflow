@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import datetime
+import requests
+from airflow.operators.python import PythonOperator
 
 import pendulum
 
@@ -21,6 +23,13 @@ with DAG(
         task_id="run_this_last",
     )
 
+    def obtener_personajes(page):
+        url = f'https://rickandmortyapi.com/api/character?page={page}'
+        response = requests.get(url)
+        data = response.json()
+        print(data)
+        return data
+
     # [START howto_operator_bash]
     run_this = BashOperator(
         task_id="run_after_loop",
@@ -31,10 +40,14 @@ with DAG(
     run_this >> run_this_last
 
     # [START howto_operator_bash_template]
-    also_run_this = BashOperator(
-        task_id="also_run_this",
-        bash_command='echo "ti_key={{ task_instance_key_str }}"',
-    )
+    for page in range(5):
+        also_run_this = PythonOperator(
+            task_id=f'obtener_pagina_{page}',
+            python_callable=obtener_personajes,
+            op_args=[page],
+            provide_context=True,
+            dag=dag,
+        )
     # [END howto_operator_bash_template]
     also_run_this >> run_this_last
 

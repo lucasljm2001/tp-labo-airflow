@@ -9,7 +9,6 @@ import pendulum
 
 import json
 
-# from airflow.operators.mysql_operator import MySqlOperator
 
 from airflow import DAG
 from airflow.operators.bash import BashOperator
@@ -48,6 +47,8 @@ with DAG(
         for character in results:
             print(character)
             cursor.execute(query, (character["id"], character["name"], character["species"], character["gender"]))
+            cnx.commit()
+        cnx.close()
         return data
 
     # [START howto_operator_bash]
@@ -57,25 +58,6 @@ with DAG(
     )
     # [END howto_operator_bash]
 
-    # crear_tabla = """
-    #     CREATE TABLE IF NOT EXISTS PERSONAJE (
-    #         id int PK,
-    #         name varchar(255), 
-    #         species varchar(255),
-    #         gender varchar(255)
-    #     );
-    #     """
-
-
-    # crear_tabla_op = MySqlOperator(
-    #     task_id='crear_tabla',
-    #     sql=crear_tabla,
-    #     mysql_conn_id='mysql_default',  # Define un identificador de conexión personalizado
-    #     autocommit=True,
-    #     dag=dag,
-    # )
-
-    # run_this >> crear_tabla_op >> run_this_last
 
     run_this >> run_this_last
 

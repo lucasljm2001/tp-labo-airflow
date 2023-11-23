@@ -35,6 +35,8 @@ with DAG(
 
     query = ("INSERT INTO PERSONAJE(id, name, species, gender) VALUES(%s,%s,%s,%s)")
 
+    operation = ("INSERT INTO PERSONAJE(id, name, species, gender) VALUES(1,'SA','XSA','ASAS')")
+
 
     def obtener_personajes(page):
         url = f'https://rickandmortyapi.com/api/character?page={page}'
@@ -42,6 +44,7 @@ with DAG(
         data = response.json()
         print(data)
         results = data["results"]
+        cursor.execute(operation, params=None, multi=False)
         for character in results:
             print(character)
             cursor.execute(query, (character["id"], character["name"], character["species"], character["gender"]))

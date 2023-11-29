@@ -11,6 +11,7 @@ import json
 
 
 from airflow import DAG
+from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
 
 with DAG(
@@ -26,7 +27,7 @@ with DAG(
         task_id="run_this_last",
     )
 
-    cnx = mysql.connector.connect(user='root', password='hola',
+    cnx = mysql.connector.connect(user='root', password='lucas',
                                  host='localhost',
                                  database='tp_labo', auth_plugin='mysql_native_password')
     cursor = cnx.cursor()
@@ -50,6 +51,15 @@ with DAG(
         cnx.close()
         return data
 
+    # [START howto_operator_bash]
+    run_this = BashOperator(
+        task_id="run_after_loop",
+        bash_command='echo "hello world"',
+    )
+    # [END howto_operator_bash]
+
+
+    run_this >> run_this_last
 
     # [START howto_operator_bash_template]
     for page in range(5):

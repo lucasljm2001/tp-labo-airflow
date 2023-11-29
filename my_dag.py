@@ -11,7 +11,6 @@ import json
 
 
 from airflow import DAG
-from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
 
 with DAG(
@@ -51,15 +50,6 @@ with DAG(
         cnx.close()
         return data
 
-    # [START howto_operator_bash]
-    run_this = BashOperator(
-        task_id="run_after_loop",
-        bash_command='echo "hello world"',
-    )
-    # [END howto_operator_bash]
-
-
-    run_this >> run_this_last
 
     # [START howto_operator_bash_template]
     for page in range(5):

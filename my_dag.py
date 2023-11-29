@@ -27,7 +27,7 @@ with DAG(
         task_id="run_this_last",
     )
 
-    cnx = mysql.connector.connect(user='root', password='root',
+    cnx = mysql.connector.connect(user='root', password='hola',
                                  host='localhost',
                                  database='tp_labo', auth_plugin='mysql_native_password')
     cursor = cnx.cursor()
